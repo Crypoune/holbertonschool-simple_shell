@@ -20,11 +20,14 @@ extern char **environ;
 int main(void)
 {
 	char buffer[1024];
-	char *argv[2];
+	char *argv[64];
 	pid_t pid;
 
 	while (1)
 	{
+		int i = 0;
+		char *token;
+
 		/* Afficher le prompt */
 		if (write(1, "($) ", 4) == -1)
 			return (1);
@@ -40,10 +43,15 @@ int main(void)
 		/* Supprimer le \n */
 		buffer[strcspn(buffer, "\n")] = '\0';
 
-			argv[0] = buffer;
-			argv[1] = NULL;
+		token = strtok(buffer, " \t");
+		while (token != NULL)
+		{
+			argv[i++] = token;
+			token = strtok(NULL, " \t");
+		}
+		argv[i] = NULL;
 		/* si l'utilisataur appuie juste sur Entrée */
-		if (argv[0][0] == '\0')
+		if (argv[0] == NULL)
 			continue;
 
 		/* Créer un processus fils */
@@ -68,6 +76,7 @@ int main(void)
 			int status;
 			waitpid(pid, &status, 0);
 		}
+
 	}
 
 	return (0);
