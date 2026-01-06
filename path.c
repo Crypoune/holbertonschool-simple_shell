@@ -1,24 +1,6 @@
 #include "shell.h"
 
 /**
- * get_path - get PATH value from environment
- *
- * Return: pointer to PATH value, or NULL
- */
-static char *get_path(void)
-{
-	int i = 0;
-
-	while (environ[i])
-	{
-		if (strncmp(environ[i], "PATH=", 5) == 0)
-			return (environ[i] + 5);
-		i++;
-	}
-	return (NULL);
-}
-
-/**
  * find_cmd - find full path of a command
  * @cmd: command name
  *
@@ -27,18 +9,21 @@ static char *get_path(void)
 char *find_cmd(char *cmd)
 {
 	char *path, *path_copy, *dir;
-	char *full_path;
+	char full_path[1024];
 
-	/* Case 1: absolute or relative path */
-	if (strchr(cmd, '/'))
+	if (!cmd)
+		return (NULL);
+
+	/* If absolute or relative path */
+	if (cmd[0] == '/' || cmd[0] == '.')
 	{
-		if (access(cmd, F_OK) == 0)
+		if (access(cmd, X_OK) == 0)
 			return (strdup(cmd));
 		return (NULL);
 	}
 
-	/* Case 2: search in PATH */
-	path = get_path();
+	/* Search in PATH */
+	path = getenv("PATH");
 	if (!path)
 		return (NULL);
 
@@ -49,19 +34,12 @@ char *find_cmd(char *cmd)
 	dir = strtok(path_copy, ":");
 	while (dir)
 	{
-		full_path = malloc(strlen(dir) + strlen(cmd) + 2);
-		if (!full_path)
-			break;
-
-		sprintf(full_path, "%s/%s", dir, cmd);
-
-		if (access(full_path, F_OK) == 0)
+		snprintf(full_path, sizeof(full_path), "%s/%s", dir, cmd);
+		if (access(full_path, X_OK) == 0)
 		{
 			free(path_copy);
-			return (full_path);
+			return (strdup(full_path));
 		}
-
-		free(full_path);
 		dir = strtok(NULL, ":");
 	}
 
