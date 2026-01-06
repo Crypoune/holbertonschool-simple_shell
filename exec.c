@@ -4,9 +4,10 @@
  * execute_cmd - Exécute une commande externe
  * @argv: Tableau des arguments de la commande
  * @prog_name: Nom du programme (shell)
+ * @cmd_count: Numéro de la commande (pour les messages d'erreur)
  * Return: 1 en cas de succès, code d'erreur sinon
  */
-int execute_cmd(char **argv, char *prog_name)
+int execute_cmd(char **argv, char *prog_name, int cmd_count)
 {
 	pid_t pid;
 	int status;
@@ -17,24 +18,24 @@ int execute_cmd(char **argv, char *prog_name)
 	/* If command not found in PATH*/
 	if (!cmd_path)
 	{
-		dprintf(2, "%s: %s: not found\n",
-				prog_name, argv[0]);
+		dprintf(2, "%s: %d: %s: not found\n",
+				prog_name, cmd_count, argv[0]);
 		return (127);
 	}
 
 	/* If no permission  */
 	if (strcmp(cmd_path, "/NO_PERMISSION") == 0)
 	{
-		dprintf(2, "%s: %s: Permission denied\n",
-				prog_name, argv[0]);
+		dprintf(2, "%s: %d: %s: Permission denied\n",
+				prog_name, cmd_count, argv[0]);
 		free(cmd_path);
 		return (126);
 	}
 	/* If is a directory */
 	if (strcmp(cmd_path, "/IS_A_DIR") == 0)
 	{
-		dprintf(2, "%s: %s: is a directory\n",
-				prog_name, argv[0]);
+		dprintf(2, "%s: %d: %s: is a directory\n",
+				prog_name, cmd_count, argv[0]);
 		free(cmd_path);
 		return (126);
 	}
@@ -56,5 +57,5 @@ int execute_cmd(char **argv, char *prog_name)
 
 	waitpid(pid, &status, 0);
 	free(cmd_path);
-	return (1);
+	return (status);
 }
