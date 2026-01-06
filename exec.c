@@ -1,12 +1,11 @@
 #include "shell.h"
 
 /**
- * execute_cmd - execute a command
- * @argv: argument vector
- * @prog_name: name of the program
- * @cmd_count: command count for error messages
- *
- * Return: 1 on success, 127 if command not found, other on error
+ * execute_cmd - Exécute une commande externe
+ * @argv: Tableau des arguments de la commande
+ * @prog_name: Nom du programme (shell)
+ * @cmd_count: Numéro de la commande (pour les messages d'erreur)
+ * Return: 1 en cas de succès, code d'erreur sinon
  */
 int execute_cmd(char **argv, char *prog_name, int cmd_count)
 {
@@ -15,6 +14,8 @@ int execute_cmd(char **argv, char *prog_name, int cmd_count)
 	char *cmd_path;
 
 	cmd_path = find_cmd(argv[0]);
+
+	/* If command not found in PATH*/
 	if (!cmd_path)
 	{
 		dprintf(2, "%s: %d: %s: not found\n",
@@ -22,6 +23,17 @@ int execute_cmd(char **argv, char *prog_name, int cmd_count)
 		return (127);
 	}
 
+	/* If no permission or is a directory */
+	if (strcmp(cmd_path, "NO_PERMISSION") == 0 ||
+	    strcmp(cmd_path, "IS_A_DIR") == 0)
+	{
+		dprintf(2, "%s: %d: %s: Permission denied\n",
+				prog_name, cmd_count, argv[0]);
+		free(cmd_path);
+		return (126);
+	}
+
+	/* Execute the command */
 	pid = fork();
 	if (pid == 0)
 	{
