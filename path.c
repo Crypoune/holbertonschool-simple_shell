@@ -42,6 +42,9 @@ char *find_cmd(char *cmd)
 	dir = strtok(path_copy, ":");
 	while (dir)
 	{
+		if (dir[0] == '\0')
+			dir = ".";
+
 		snprintf(full_path, sizeof(full_path), "%s/%s", dir, cmd);
 		if (stat(full_path, &st) == 0)
 		{
