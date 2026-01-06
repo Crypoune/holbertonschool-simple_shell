@@ -1,48 +1,50 @@
 #include "shell.h"
 
 /**
- * main - entry point of the simple shell
+ * main - Point d'entrée du shell simple
+ * @argc: Nombre d'arguments
+ * @argv: Tableau des arguments
  *
- * Return: Always 0
+ * Return: 0 en cas de succès
  */
-int main(void)
+int main(int argc, char **argv)
 {
-	char buffer[BUFFER_SIZE];
-	char **argv;
+	char *line = NULL;
+	size_t len = 0;
+	ssize_t read;
+	char **args;
+	int cmd_count = 0;
+
+	(void)argc;
 
 	while (1)
 	{
 		/* Afficher le prompt */
 		if (isatty(STDIN_FILENO))
-			write(STDOUT_FILENO, "($) ", 4);
+			write(1, "$ ", 2);
 
 		/* Lire la commande */
-		if (fgets(buffer, BUFFER_SIZE, stdin) == NULL)
-		{
-			if (isatty(STDIN_FILENO))
-				write(STDOUT_FILENO, "\n", 1);
+		read = getline(&line, &len, stdin);
+		if (read == -1)
 			break;
-		}
 
-		/* Parser la ligne */
-		argv = parse_line(buffer);
-		if (!argv || argv[0])
+		/* Supprimer le saut de ligne */
+		if (read > 1)
 		{
-			free(argv);
-			continue;
-		}
+			line[read - 1] = '\0';
+			cmd_count++;
 
-		/* Gérer les built-ins */
-		if (handle_builtins(argv))
-		{
-			free(argv);
-			continue;
-		}
+			args = parse_line(line);
+			if (!args || !args[0])
+				continue;
 
-		/* Exécuter la commande */
-		execute_cmd(argv);
-		free(argv);
+			if (!handle_builtins(args))
+				execute_cmd(args, argv[0], cmd_count);
+
+			free(args);
+		}
 	}
 
+	free(line);
 	return (0);
 }
