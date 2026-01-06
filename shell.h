@@ -25,7 +25,7 @@ char **parse_line(char *line);
 char *find_cmd(char *cmd);
 
 /* exec */
-int execute_cmd(char **argv, char *prog_name);
+int execute_cmd(char **argv, char *prog_name, int cmd_count);
 
 /* builtins */
 int handle_builtins(char **argv);
