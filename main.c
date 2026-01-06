@@ -26,23 +26,34 @@ int main(int argc, char **argv)
 		/* Lire la commande */
 		read = getline(&line, &len, stdin);
 		if (read == -1)
+		{
+			if (isatty(STDIN_FILENO))
+				write(1, "\n", 1);
 			break;
+		}
 
 		/* Supprimer le saut de ligne */
-		if (read > 1)
+		if (read == 1)
+			continue;
+
+		line[read - 1] = '\0';
+		cmd_count++;
+
+		args = parse_line(line);
+		if (!args || !args[0])
 		{
-			line[read - 1] = '\0';
-			cmd_count++;
-
-			args = parse_line(line);
-			if (!args || !args[0])
-				continue;
-
-			if (!handle_builtins(args))
-				execute_cmd(args, argv[0], cmd_count);
-
 			free(args);
+			continue;
 		}
+
+		if (handle_builtins(args))
+		{
+			free(args);
+			continue;
+		}
+
+		execute_cmd(args, argv[0], cmd_count);
+		free(args);
 	}
 
 	free(line);
