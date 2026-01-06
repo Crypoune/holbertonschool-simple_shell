@@ -14,9 +14,6 @@
 /* File control / error handling */
 #include <errno.h>
 
-#define MAX_ARGS 64
-#define BUFFER_SIZE 1024
-
 /* Function prototypes */
 extern char **environ;
 
@@ -27,12 +24,9 @@ char **parse_line(char *line);
 char *find_cmd(char *cmd);
 
 /* exec */
-void execute_cmd(char **argv);
+int execute_cmd(char **argv, char *prog_name, int cmd_count);
 
 /* builtins */
 int handle_builtins(char **argv);
-
-/* env */
-void print_env(void);
 
 #endif /* SHELL_H */
