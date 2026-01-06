@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 			continue;
 		}
 
-		execute_cmd(args, argv[0], cmd_count);
+		execute_cmd(args, argv[0]);
 		free(args);
 	}
 
