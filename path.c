@@ -22,10 +22,10 @@ char *find_cmd(char *cmd)
 			return (NULL);
 
 		if (S_ISDIR(st.st_mode))
-			return (strdup("IS_A_DIR"));
+			return (strdup("/IS_A_DIR"));
 
 		if (access(cmd, X_OK) != 0)
-			return (strdup("NO_PERMISSION"));
+			return (strdup("/NO_PERMISSION"));
 
 		return (strdup(cmd));
 	}
@@ -43,11 +43,16 @@ char *find_cmd(char *cmd)
 	while (dir)
 	{
 		snprintf(full_path, sizeof(full_path), "%s/%s", dir, cmd);
-		if (stat(full_path, &st) == 0 && access(full_path, X_OK) == 0)
+		if (stat(full_path, &st) == 0)
 		{
-			free(path_copy);
-			return (strdup(full_path));
+			if (!S_ISDIR(st.st_mode)
+			&& (access(full_path, X_OK) == 0))
+			{
+				free(path_copy);
+				return (strdup(full_path));
+			}
 		}
+
 		dir = strtok(NULL, ":");
 	}
 
