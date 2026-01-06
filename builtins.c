@@ -1,14 +1,14 @@
 #include "shell.h"
 
 /**
- * handle_builtins - handle shell built-in commands
- * @argv: argument vector
+ * handle_builtins - Gère les commandes built-in
+ * @argv: Tableau des arguments de la commande
  *
- * Return: 1 if a built-in was executed, 0 otherwise
+ * Return: 1 si une built-in a été exécutée, 0 sinon
  */
 int handle_builtins(char **argv)
 {
-	int i;
+	int i = 0;
 
 	if (!argv || !argv[0])
 		return (0);
@@ -22,11 +22,9 @@ int handle_builtins(char **argv)
 	/* env built-in */
 	if (strcmp(argv[0], "env") == 0)
 	{
-		i = 0;
 		while (environ[i])
 		{
-			write(STDOUT_FILENO, environ[i], strlen(environ[i]));
-			write(STDOUT_FILENO, "\n", 1);
+			printf("%s\n", environ[i]);
 			i++;
 		}
 		return (1);
