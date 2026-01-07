@@ -11,6 +11,7 @@ char **parse_line(char *line)
 	char **argv;
 	char *token, *line_copy;
 	int i = 0;
+	int j;
 
 	if (!line)
 		return (NULL);
@@ -29,10 +30,9 @@ char **parse_line(char *line)
 		argv[i] = strdup(token);
 		if (!argv[i])
 		{
-			while (i > 0)
+			for (j = 0; j < i; j++)
 			{
-				free(argv[i - 1]);
-				i--;
+				free(argv[j]);
 			}
 			free(argv);
 			free(line_copy);
