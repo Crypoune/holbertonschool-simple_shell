@@ -6,6 +6,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <signal.h>
+#include <limits.h>
 
 /* Process & wait */
 #include <sys/types.h>
@@ -19,7 +21,6 @@
 #define MAX_ARGS 64   /* argument number limit */
 
 /* External variables */
-extern int cmd_error;
 extern char **environ;
 
 /* Function prototypes */
