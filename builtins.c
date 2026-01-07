@@ -1,10 +1,10 @@
 #include "shell.h"
 
 /**
- * handle_builtins - Gère les commandes built-in
- * @argv: Tableau des arguments de la commande
+ * handle_builtins - handle built-in commands
+ * @argv: Array of command arguments
  *
- * Return: 1 si une built-in a été exécutée, 0 sinon
+ * Return: 1 if a builtin was executed, 0 otherwise
  */
 int handle_builtins(char **argv)
 {
