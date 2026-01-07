@@ -1,6 +1,16 @@
 #include "shell.h"
 
 /**
+ * ignore_ctrlc - Signal handler to ignore Ctrl+C
+ * @sig: Signal number
+ */
+void ignore_ctrlc(int sig)
+{
+	(void)sig;
+	write(STDOUT_FILENO, "\n$ ", 3);
+}
+
+/**
  * main - Entry point of the shell program
  * @argc: Number of arguments
  * @argv: Array of arguments
@@ -18,6 +28,8 @@ int main(int argc, char **argv)
 
 	(void)argc;
 	interactive = isatty(STDIN_FILENO);
+	signal(SIGINT, ignore_ctrlc);
+
 	while (1)
 	{
 		if (interactive)
