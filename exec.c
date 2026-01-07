@@ -111,6 +111,12 @@ int execute_cmd(char **argv, char *prog_name, int cmd_count)
 	if (!argv[0])
 		return (127);
 
+	if(strcmp(argv[0], ".") == 0 || strcmp(argv[0], "..") == 0)
+	{
+		dprintf(2, "%s: %d: %s: is a directory\n",
+			prog_name, cmd_count, argv[0]);
+		return (126);
+	}
 	cmd_path = get_cmd_path(argv[0], prog_name, cmd_count, &error_code);
 	if (!cmd_path)
 		return (error_code);
