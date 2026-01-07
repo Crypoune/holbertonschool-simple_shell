@@ -20,19 +20,14 @@ char *find_cmd(char *cmd)
 	{
 		if (stat(cmd, &st) != 0)
 			return (NULL);
-
-		if (S_ISDIR(st.st_mode))
-			return (strdup("IS_A_DIR"));
-
-		if (access(cmd, X_OK) != 0)
-			return (strdup("NO_PERMISSION"));
-
+		if (S_ISDIR(st.st_mode) || access(cmd, X_OK) != 0)
+			return (NULL);
 		return (strdup(cmd));
 	}
 
 	/* Search in PATH */
 	path = getenv("PATH");
-	if (!path || path[0] == '\0')
+	if (!path || !*path)
 		return (NULL);
 
 	path_copy = strdup(path);
@@ -42,8 +37,13 @@ char *find_cmd(char *cmd)
 	dir = strtok(path_copy, ":");
 	while (dir)
 	{
+		if (*dir == '\0')
+			dir = ".";
+
 		snprintf(full_path, sizeof(full_path), "%s/%s", dir, cmd);
-		if (stat(full_path, &st) == 0 && access(full_path, X_OK) == 0)
+		if (stat(full_path, &st) == 0 &&
+			!S_ISDIR(st.st_mode) &&
+			access(full_path, X_OK) == 0)
 		{
 			free(path_copy);
 			return (strdup(full_path));

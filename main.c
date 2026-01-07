@@ -13,6 +13,7 @@ int main(int argc, char **argv)
 	size_t len = 0;
 	ssize_t read;
 	char **args;
+	int status = 0;
 	int cmd_count = 0;
 
 	(void)argc;
@@ -37,7 +38,6 @@ int main(int argc, char **argv)
 			continue;
 
 		line[read - 1] = '\0';
-		cmd_count++;
 
 		args = parse_line(line);
 		if (!args || !args[0])
@@ -46,16 +46,18 @@ int main(int argc, char **argv)
 			continue;
 		}
 
+		cmd_count++;
+
 		if (handle_builtins(args))
 		{
 			free(args);
 			continue;
 		}
 
-		execute_cmd(args, argv[0], cmd_count);
+		status = execute_cmd(args, argv[0], cmd_count);
 		free(args);
 	}
 
 	free(line);
-	return (0);
+	return (status);
 }
