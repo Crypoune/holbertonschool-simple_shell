@@ -15,6 +15,7 @@ int main(int argc, char **argv)
 	char **args;
 	int cmd_count = 0;
 	int interactive = 0;
+	int status = 0;
 
 	(void)argc;
 
@@ -26,6 +27,8 @@ int main(int argc, char **argv)
 			write(1, "$ ", 2);
 
 		read = getline(&line, &len, stdin);
+
+		cmd_count++;
 
 		if (read == -1)
 		{
@@ -52,12 +55,10 @@ int main(int argc, char **argv)
 			continue;
 		}
 
-		cmd_count++;
-
-		execute_cmd(args, argv[0], cmd_count);
+		status = execute_cmd(args, argv[0], cmd_count);
 		free(args);
 	}
 
 	free(line);
-	return (0);
+	return (status);
 }
