@@ -37,7 +37,6 @@ int main(int argc, char **argv)
 			continue;
 
 		line[read - 1] = '\0';
-		cmd_count++;
 
 		args = parse_line(line);
 		if (!args || !args[0])
@@ -45,6 +44,8 @@ int main(int argc, char **argv)
 			free(args);
 			continue;
 		}
+
+		cmd_count++;
 
 		if (handle_builtins(args))
 		{
