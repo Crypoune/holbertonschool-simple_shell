@@ -14,17 +14,37 @@ int execute_cmd(char **argv, char *prog_name, int cmd_count)
 	char *cmd_path;
 	struct stat st;
 
-	cmd_path = find_cmd(argv[0]);
+	if (!argv[0])
+		return 127;
 
-	/* If command not found in PATH*/
-	if (!cmd_path)
+
+	if (strchr(argv[0], '/'))
 	{
-		dprintf(2, "%s: %d: %s: not found\n",
-				prog_name, cmd_count, argv[0]);
-		return (127);
+		if (stat(argv[0], &st) != 0)  // fichier inexistant
+		{
+			dprintf(2, "%s: %d: %s: not found\n", prog_name, cmd_count, argv[0]);
+			return 127;
+		}
+
+		if (S_ISDIR(st.st_mode) || access(argv[0], X_OK) != 0) // dossier ou non exécutable
+		{
+			dprintf(2, "%s: %d: %s: Permission denied\n", prog_name, cmd_count, argv[0]);
+			return 126;
+		}
+
+		cmd_path = strdup(argv[0]);
+	}
+	else
+	{
+		cmd_path = find_cmd(argv[0]);
+		if (!cmd_path)
+		{
+			dprintf(2, "%s: %d: %s: not found\n", prog_name, cmd_count, argv[0]);
+			return 127; /* jamais fork */
+		}
 	}
 
-	if (stat(cmd_path, &st) ==0 &&
+	if (stat(cmd_path, &st) == 0 &&
 		(S_ISDIR(st.st_mode) || access(cmd_path, X_OK) != 0))
 	{
 		dprintf(2, "%s: %d: %s: Permission denied\n",
