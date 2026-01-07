@@ -1,5 +1,13 @@
 #include "shell.h"
 
+/**
+ * check_cmd_error - check for command errors
+ * @cmd: command name
+ * @prog_name: program name (shell)
+ * @cmd_count: command count (for error messages)
+ *
+ * Return: 0 if no error, error code otherwise
+ */
 static int check_cmd_error(char *cmd, char *prog_name, int cmd_count)
 {
 	struct stat st;
