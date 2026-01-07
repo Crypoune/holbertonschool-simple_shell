@@ -90,7 +90,7 @@ static int handle_exit_status(int status)
 		return (WEXITSTATUS(status));
 	else if (WIFSIGNALED(status))
 		return (128 + WTERMSIG(status));
-	return (1);
+	return (stat);
 }
 
 /**
