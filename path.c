@@ -9,7 +9,7 @@
 char *find_cmd(char *cmd)
 {
 	char *path, *path_copy, *dir;
-	char full_path[1024];
+	char full_path[PATH_MAX];
 	struct stat st;
 
 	if (!cmd || cmd[0] == '\0')
