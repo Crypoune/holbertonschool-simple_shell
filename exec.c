@@ -1,47 +1,37 @@
 #include "shell.h"
 
 /**
- * check_cmd_error - check for command errors
+ * check_absolute_path - check if the command is an absolute or relative path
  * @cmd: command name
  * @prog_name: program name (shell)
  * @cmd_count: command count (for error messages)
+ * @error_code: pointer to error code
  *
- * Return: 0 if no error, error code otherwise
+ * Return: full path of the command, or NULL if not found
  */
-static int check_cmd_error(char *cmd, char *prog_name, int cmd_count)
+static char *check_absolute_path(char *cmd, char *prog_name, int cmd_count,
+	int *error_code)
 {
 	struct stat st;
 
-	if (!cmd)
-		return (127);
-
-	if (strchr(cmd, '/'))
-	{
-		if (stat(cmd, &st) != 0)
-		{
-			dprintf(2, "%s: %d: %s: not found\n",
-				prog_name, cmd_count, cmd);
-			return (127);
-		}
-
-		if (S_ISDIR(st.st_mode) || access(cmd, X_OK) != 0)
-		{
-			dprintf(2, "%s: %d: %s: Permission denied\n",
-				prog_name, cmd_count, cmd);
-			return (126);
-		}
-
-		return (0);
-	}
-
-	if (!find_cmd(cmd))
+	if (stat(cmd, &st) != 0)
 	{
 		dprintf(2, "%s: %d: %s: not found\n",
 			prog_name, cmd_count, cmd);
-		return (127);
+		*error_code = 127;
+		return (NULL);
 	}
 
-	return (0);
+	if (S_ISDIR(st.st_mode) || access(cmd, X_OK) != 0)
+	{
+		dprintf(2, "%s: %d: %s: Permission denied\n",
+			prog_name, cmd_count, cmd);
+		*error_code = 126;
+		return (NULL);
+	}
+
+	*error_code = 0;
+	return (strdup(cmd));
 }
 
 /**
@@ -49,40 +39,34 @@ static int check_cmd_error(char *cmd, char *prog_name, int cmd_count)
  * @cmd: command name
  * @prog_name: program name (shell)
  * @cmd_count: command count (for error messages)
+ * @error_code: pointer to error code
  *
  * Return: full path of the command, or NULL if not found
  */
-static char *get_cmd_path(char *cmd, char *prog_name, int cmd_count)
+static char *get_cmd_path(char *cmd, char *prog_name, int cmd_count,
+	int *error_code)
 {
-	struct stat st;
 	char *cmd_path;
 
 	if (!cmd)
+	{
+		*error_code = 127;
 		return (NULL);
+	}
 
 	if (strchr(cmd, '/'))
-	{
-		if (stat(cmd, &st) != 0)
-		{
-			dprintf(2, "%s: %d: %s: not found\n",
-				prog_name, cmd_count, cmd);
-			return (NULL);
-		}
-		if (S_ISDIR(st.st_mode) || access(cmd, X_OK) != 0)
-		{
-			dprintf(2, "%s: %d: %s: Permission denied\n",
-				prog_name, cmd_count, cmd);
-			return (NULL);
-		}
-
-		return (strdup(cmd));
-	}
+		return (check_absolute_path(cmd, prog_name, cmd_count, error_code));
 
 	cmd_path = find_cmd(cmd);
 	if (!cmd_path)
+	{
 		dprintf(2, "%s: %d: %s: not found\n",
 			prog_name, cmd_count, cmd);
+		*error_code = 127;
+		return (NULL);
+	}
 
+	*error_code = 0;
 	return (cmd_path);
 }
 
@@ -113,19 +97,15 @@ int execute_cmd(char **argv, char *prog_name, int cmd_count)
 {
 	pid_t pid;
 	int status;
-	int error_code;
+	int error_code = 0;
 	char *cmd_path;
 
 	if (!argv[0])
 		return (127);
 
-	error_code = check_cmd_error(argv[0], prog_name, cmd_count);
-	if (error_code != 0)
-		return (error_code);
-
-	cmd_path = get_cmd_path(argv[0], prog_name, cmd_count);
+	cmd_path = get_cmd_path(argv[0], prog_name, cmd_count, &error_code);
 	if (!cmd_path)
-		return (127);
+		return (error_code);
 
 	pid = fork();
 	if (pid == -1)
@@ -138,6 +118,7 @@ int execute_cmd(char **argv, char *prog_name, int cmd_count)
 	if (pid == 0)
 	{
 		execve(cmd_path, argv, environ);
+		free(cmd_path);
 		perror(prog_name);
 		exit(127);
 	}
