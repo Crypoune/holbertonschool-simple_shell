@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 	size_t len = 0;
 	ssize_t read;
 	char **args;
-	int status;
+	int status = 0;
 	int cmd_count = 0;
 
 	(void)argc;

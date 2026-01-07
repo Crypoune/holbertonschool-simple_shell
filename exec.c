@@ -12,6 +12,7 @@ int execute_cmd(char **argv, char *prog_name, int cmd_count)
 	pid_t pid;
 	int status;
 	char *cmd_path;
+	struct stat st;
 
 	cmd_path = find_cmd(argv[0]);
 
@@ -23,10 +24,12 @@ int execute_cmd(char **argv, char *prog_name, int cmd_count)
 		return (127);
 	}
 
-	if (cmd_error == 126)
+	if (stat(cmd_path, &st) ==0 &&
+		(S_ISDIR(st.st_mode) || access(cmd_path, X_OK) != 0))
 	{
 		dprintf(2, "%s: %d: %s: Permission denied\n",
 				prog_name, cmd_count, argv[0]);
+		free(cmd_path);
 		return (126);
 	}
 
@@ -35,15 +38,10 @@ int execute_cmd(char **argv, char *prog_name, int cmd_count)
 	if (pid == 0)
 	{
 		execve(cmd_path, argv, environ);
-		perror("execve");
-		exit(EXIT_FAILURE);
+		perror(prog_name);
+		exit(1);
 	}
-	else if (pid < 0)
-	{
-		perror("fork");
-		return (1);
-	}
-
 	waitpid(pid, &status, 0);
-	return (status);
+	free(cmd_path);
+	return (WEXITSTATUS(status));
 }
