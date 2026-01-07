@@ -7,7 +7,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
-#include <limits.h>
 
 /* Process & wait */
 #include <sys/types.h>
