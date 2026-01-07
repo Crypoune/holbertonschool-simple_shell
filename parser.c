@@ -12,12 +12,12 @@ char **parse_line(char *line)
 	char *token;
 	int i = 0;
 
-	argv = malloc(sizeof(char *) * 64);
+	argv = malloc(sizeof(char *) * MAX_ARGS);
 	if (!argv)
 		return (NULL);
 
 	token = strtok(line, " \t");
-	while (token)
+	while (token && i < MAX_ARGS - 1)
 	{
 		argv[i++] = token;
 		token = strtok(NULL, " \t");

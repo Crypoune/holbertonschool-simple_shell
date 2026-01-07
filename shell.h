@@ -15,6 +15,9 @@
 /* File control / error handling */
 #include <errno.h>
 
+/* Constants */
+#define MAX_ARGS 64   /* argument number limit */
+
 /* External variables */
 extern int cmd_error;
 extern char **environ;

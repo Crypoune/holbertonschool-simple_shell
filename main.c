@@ -46,14 +46,13 @@ int main(int argc, char **argv)
 			continue;
 		}
 
-		cmd_count++;
-
 		if (handle_builtins(args))
 		{
 			free(args);
 			continue;
 		}
 
+		cmd_count++;
 		status = execute_cmd(args, argv[0], cmd_count);
 		free(args);
 	}
