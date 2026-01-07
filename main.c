@@ -13,6 +13,7 @@ int main(int argc, char **argv)
 	size_t len = 0;
 	ssize_t read;
 	char **args;
+	int status;
 	int cmd_count = 0;
 
 	(void)argc;
@@ -53,10 +54,10 @@ int main(int argc, char **argv)
 			continue;
 		}
 
-		execute_cmd(args, argv[0], cmd_count);
+		status = execute_cmd(args, argv[0], cmd_count);
 		free(args);
 	}
 
 	free(line);
-	return (0);
+	return (status);
 }
