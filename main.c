@@ -18,22 +18,22 @@ int main(int argc, char **argv)
 
 	(void)argc;
 
+	int interactive = isatty(STDIN_FILENO);
+
 	while (1)
 	{
-		/* Afficher le prompt */
-		if (isatty(STDIN_FILENO))
-			write(1, "$ ", 2);
-
-		/* Lire la commande */
 		read = getline(&line, &len, stdin);
+
 		if (read == -1)
 		{
-			if (isatty(STDIN_FILENO))
+			if (interactive)
 				write(1, "\n", 1);
 			break;
 		}
 
-		/* Supprimer le saut de ligne */
+		if (interactive)
+			write(1, "$ ", 2);
+
 		if (read == 1)
 			continue;
 
