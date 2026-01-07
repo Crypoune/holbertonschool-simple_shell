@@ -22,7 +22,15 @@ static char *check_absolute_path(char *cmd, char *prog_name, int cmd_count,
 		return (NULL);
 	}
 
-	if (S_ISDIR(st.st_mode) || access(cmd, X_OK) != 0)
+	if (S_ISDIR(st.st_mode))
+	{
+		dprintf(2, "%s: %d: %s: is a directory\n",
+			prog_name, cmd_count, cmd);
+		*error_code = 126;
+		return (NULL);
+	}
+
+	if (access(cmd, X_OK) != 0)
 	{
 		dprintf(2, "%s: %d: %s: Permission denied\n",
 			prog_name, cmd_count, cmd);

@@ -23,13 +23,11 @@ int main(int argc, char **argv)
 	size_t len = 0;
 	ssize_t read;
 	char **args;
-	int cmd_count = 0;
-	int interactive = 0, status = 0;
+	int cmd_count = 0, interactive = 0, status = 0;
 
 	(void)argc;
 	interactive = isatty(STDIN_FILENO);
 	signal(SIGINT, ignore_ctrlc);
-
 	while (1)
 	{
 		if (interactive)
