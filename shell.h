@@ -15,9 +15,11 @@
 /* File control / error handling */
 #include <errno.h>
 
-/* Function prototypes */
+/* External variables */
+extern int cmd_error;
 extern char **environ;
 
+/* Function prototypes */
 /* parser */
 char **parse_line(char *line);
 
