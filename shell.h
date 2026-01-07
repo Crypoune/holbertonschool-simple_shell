@@ -35,4 +35,7 @@ int execute_cmd(char **argv, char *prog_name, int cmd_count);
 /* builtins */
 int handle_builtins(char **argv);
 
+/* cleanup */
+void free_argv(char **argv);
+
 #endif /* SHELL_H */
