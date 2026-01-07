@@ -15,17 +15,13 @@ char *find_cmd(char *cmd)
 	if (!cmd || cmd[0] == '\0')
 		return (NULL);
 
-	/* If absolute or relative path */
 	if (strchr(cmd, '/'))
 	{
-		if (stat(cmd, &st) != 0)
-			return (NULL);
-		if (S_ISDIR(st.st_mode) || access(cmd, X_OK) != 0)
+		if ((stat(cmd, &st) != 0) || (S_ISDIR(st.st_mode) || access(cmd, X_OK) != 0))
 			return (NULL);
 		return (strdup(cmd));
 	}
 
-	/* Search in PATH */
 	path = getenv("PATH");
 	if (!path || !*path)
 		return (NULL);
@@ -50,7 +46,6 @@ char *find_cmd(char *cmd)
 		}
 		dir = strtok(NULL, ":");
 	}
-
 	free(path_copy);
 	return (NULL);
 }
