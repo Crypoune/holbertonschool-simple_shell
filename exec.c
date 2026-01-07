@@ -23,20 +23,10 @@ int execute_cmd(char **argv, char *prog_name, int cmd_count)
 		return (127);
 	}
 
-	/* If no permission  */
-	if (strcmp(cmd_path, "/NO_PERMISSION") == 0)
+	if (cmd_error == 126)
 	{
 		dprintf(2, "%s: %d: %s: Permission denied\n",
 				prog_name, cmd_count, argv[0]);
-		free(cmd_path);
-		return (126);
-	}
-	/* If is a directory */
-	if (strcmp(cmd_path, "/IS_A_DIR") == 0)
-	{
-		dprintf(2, "%s: %d: %s: is a directory\n",
-				prog_name, cmd_count, argv[0]);
-		free(cmd_path);
 		return (126);
 	}
 
@@ -51,11 +41,9 @@ int execute_cmd(char **argv, char *prog_name, int cmd_count)
 	else if (pid < 0)
 	{
 		perror("fork");
-		free(cmd_path);
 		return (1);
 	}
 
 	waitpid(pid, &status, 0);
-	free(cmd_path);
 	return (status);
 }
