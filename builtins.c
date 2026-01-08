@@ -16,7 +16,7 @@ int handle_builtins(char **argv)
 	/* exit built-in */
 	if (strcmp(argv[0], "exit") == 0)
 	{
-		exit(0);
+		exit(-1);
 	}
 
 	/* env built-in */
