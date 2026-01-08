@@ -4,11 +4,11 @@
  * _getenv - Get the value of an environment variable
  * @name: Name of the environment variable
  *
- * Return: Pointer to the value of the environment variable, or NULL if not found
+ * Return: Pointer to the value of the environment variable,
+ *			or NULL if not found
  */
 char *_getenv(const char *name)
 {
-	extern char **environ;
 	size_t name_len = strlen(name);
 	char **env;
 
