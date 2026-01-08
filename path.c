@@ -9,12 +9,7 @@
  */
 static char *concatenate_path(const char *dir, const char *cmd)
 {
-	char *full_path;
-
-	if (!dir || !cmd)
-		return (NULL);
-
-	full_path = malloc(strlen(dir) + strlen(cmd) + 2);
+	char *full_path = malloc(strlen(dir) + strlen(cmd) + 2);
 	if (!full_path)
 		return (NULL);
 
@@ -41,11 +36,11 @@ char *find_cmd(char *cmd)
 		return (NULL);
 	if (strchr(cmd, '/'))
 	{
-		if ((stat(cmd, &st) != 0) || (S_ISDIR(st.st_mode) || access(cmd, X_OK) != 0))
+		if (stat(cmd, &st) != 0 || S_ISDIR(st.st_mode) || access(cmd, X_OK) != 0)
 			return (NULL);
 		return (strdup(cmd));
 	}
-	path = getenv("PATH");
+	path = _getenv("PATH");
 	if (!path || !*path)
 		return (NULL);
 	path_copy = strdup(path);
