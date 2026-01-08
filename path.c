@@ -10,6 +10,7 @@
 static char *concatenate_path(const char *dir, const char *cmd)
 {
 	char *full_path = malloc(strlen(dir) + strlen(cmd) + 2);
+
 	if (!full_path)
 		return (NULL);
 
