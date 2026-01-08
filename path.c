@@ -49,7 +49,7 @@ char *find_cmd(char *cmd)
 	dir = strtok(path_copy, ":");
 	while (dir)
 	{
-		if(*dir == '\0')
+		if (*dir == '\0')
 			dir = ".";
 		full_path = concatenate_path(dir, cmd);
 		if (!full_path)
