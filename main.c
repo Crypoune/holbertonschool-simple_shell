@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 			free_argv(args);
 			continue;
 		}
-		if (handle_builtins(args))
+		if (handle_builtins(args, &status))
 		{
 			free_argv(args);
 			continue;
