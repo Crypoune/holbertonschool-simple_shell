@@ -7,7 +7,8 @@
 void ignore_ctrlc(int sig)
 {
 	(void)sig;
-	write(STDOUT_FILENO, "\n$ ", 3);
+	write(STDOUT_FILENO, "\n", 1);
+	write(STDOUT_FILENO, "$ ", 2);
 }
 
 /**
@@ -49,7 +50,7 @@ int main(int argc, char **argv)
 			free_argv(args);
 			continue;
 		}
-		if (handle_builtins(args, &status))
+		if (handle_builtins(args, &status, line))
 		{
 			free_argv(args);
 			continue;
@@ -57,6 +58,6 @@ int main(int argc, char **argv)
 		status = execute_cmd(args, argv[0], cmd_count);
 		free_argv(args);
 	}
-	free(line);
+	cleanup_shell(line);
 	return (status);
 }

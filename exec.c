@@ -16,7 +16,7 @@ static char *check_absolute_path(char *cmd, char *prog_name, int cmd_count,
 
 	if (stat(cmd, &st) != 0)
 	{
-		dprintf(2, "%s: %d: %s: not found\n",
+		fprintf(stderr, "%s: %d: %s: not found\n",
 			prog_name, cmd_count, cmd);
 		*error_code = 127;
 		return (NULL);
@@ -24,7 +24,7 @@ static char *check_absolute_path(char *cmd, char *prog_name, int cmd_count,
 
 	if (S_ISDIR(st.st_mode))
 	{
-		dprintf(2, "%s: %d: %s: is a directory\n",
+		fprintf(stderr, "%s: %d: %s: is a directory\n",
 			prog_name, cmd_count, cmd);
 		*error_code = 126;
 		return (NULL);
@@ -32,7 +32,7 @@ static char *check_absolute_path(char *cmd, char *prog_name, int cmd_count,
 
 	if (access(cmd, X_OK) != 0)
 	{
-		dprintf(2, "%s: %d: %s: Permission denied\n",
+		fprintf(stderr, "%s: %d: %s: Permission denied\n",
 			prog_name, cmd_count, cmd);
 		*error_code = 126;
 		return (NULL);
@@ -68,7 +68,7 @@ static char *get_cmd_path(char *cmd, char *prog_name, int cmd_count,
 	cmd_path = find_cmd(cmd);
 	if (!cmd_path)
 	{
-		dprintf(2, "%s: %d: %s: not found\n",
+		fprintf(stderr, "%s: %d: %s: not found\n",
 			prog_name, cmd_count, cmd);
 		*error_code = 127;
 		return (NULL);
@@ -113,7 +113,7 @@ int execute_cmd(char **argv, char *prog_name, int cmd_count)
 
 	if (strcmp(argv[0], ".") == 0 || strcmp(argv[0], "..") == 0)
 	{
-		dprintf(2, "%s: %d: %s: is a directory\n",
+		fprintf(stderr, "%s: %d: %s: is a directory\n",
 			prog_name, cmd_count, argv[0]);
 		return (126);
 	}

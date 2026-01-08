@@ -4,10 +4,11 @@
  * handle_builtins - handle built-in commands
  * @argv: Array of command arguments
  * @status: Pointer to the exit status
+ * @line: input line to free on exit
  *
  * Return: 1 if a builtin was executed, 0 otherwise
  */
-int handle_builtins(char **argv, int *status)
+int handle_builtins(char **argv, int *status, char *line)
 {
 	int i = 0;
 	int exit_code;
@@ -18,12 +19,11 @@ int handle_builtins(char **argv, int *status)
 	/* exit built-in */
 	if (strcmp(argv[0], "exit") == 0)
 	{
-		if (argv[1])
-		{
-			exit_code = atoi(argv[1]);
-			exit(exit_code);
-		}
-		exit(*status);
+		exit_code = argv[1] ? atoi(argv[1]) : *status;
+
+		free_argv(argv);
+		cleanup_shell(line);
+		exit(exit_code);
 	}
 
 	/* env built-in */
