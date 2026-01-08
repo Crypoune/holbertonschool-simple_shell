@@ -21,3 +21,15 @@ void free_argv(char **argv)
 
 	free(argv);
 }
+
+/**
+ * cleanup_shell - free global resources before exiting the shell
+ * @line: pointer to the input line to free
+ *
+ * Return: void
+ */
+void cleanup_shell(char *line)
+{
+	if (line)
+		free(line);
+}
