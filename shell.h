@@ -32,6 +32,9 @@ char *find_cmd(char *cmd);
 /* exec */
 int execute_cmd(char **argv, char *prog_name, int cmd_count);
 
+/* getenv */
+char *_getenv(const char *name);
+
 /* builtins */
 int handle_builtins(char **argv);
 
