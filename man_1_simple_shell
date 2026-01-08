@@ -1,0 +1,123 @@
+.TH HSH 1 "6 January 2026" "Holberton School" "Simple Shell Manual"
+.SH NAME
+hsh \- simple UNIX command line interpreter
+.SH SYNOPSIS
+.B hsh
+.SH DESCRIPTION
+.B hsh
+is a minimal command line interpreter that reads commands from standard input
+and executes them using system calls.
+
+The shell supports interactive and non-interactive modes and is designed as
+an educational reimplementation of basic UNIX shell behavior.
+
+It does not implement advanced features such as pipes, redirections, or job
+control.
+
+.SH MODES OF OPERATION
+.TP
+.B Interactive mode
+When standard input is connected to a terminal,
+.B hsh
+displays a prompt and waits for user input.
+Each command is executed before the prompt is shown again.
+.TP
+.B Non-interactive mode
+When input is provided via a pipe or file,
+.B hsh
+reads and executes commands line by line without displaying a prompt.
+
+.SH COMMAND PROCESSING
+For each command line,
+.B hsh
+performs the following steps:
+.IP 1. 3
+Reads a line from standard input using \fBgetline\fR.
+.IP 2. 3
+Parses the line into arguments using whitespace delimiters.
+.IP 3. 3
+Checks if the command is a built-in command.
+.IP 4. 3
+Searches for the executable:
+.RS
+- If the command contains a slash (/), it is treated as a path  
+- Otherwise, it is searched in directories listed in the \fBPATH\fR variable
+.RE
+.IP 5. 3
+If found, creates a child process using \fBfork\fR.
+.IP 6. 3
+Executes the command with \fBexecve\fR and waits for completion.
+
+If the command cannot be found, no child process is created.
+
+.SH PATH HANDLING
+.B hsh
+retrieves the \fBPATH\fR environment variable using a custom implementation
+of \fB_getenv\fR.
+Each directory in PATH is tested to locate an executable file with execute
+permissions.
+
+.SH BUILT-IN COMMANDS
+The following built-in commands are supported:
+.TP
+.B env
+Prints the current environment variables.
+.TP
+.B exit
+Exits the shell.
+
+.SH EXIT STATUS
+.B hsh
+returns the exit status of the last executed command.
+.TP
+.B 0
+Successful execution.
+.TP
+.B 126
+Permission denied.
+.TP
+.B 127
+Command not found.
+
+.SH EXAMPLES
+.TP
+Start the shell interactively:
+.B
+.nf
+$ ./hsh
+$
+.fi
+.TP
+Execute a command found in PATH:
+.B
+.nf
+$ ls -l
+total 8
+-rw-r--r-- 1 user user  123 main.c
+.fi
+.TP
+Execute a command using an absolute path:
+.B
+.nf
+$ /bin/pwd
+/home/user/project
+.fi
+
+.SH LIMITATIONS
+- No pipes or redirections
+- No wildcard expansion
+- No command chaining
+- No job control
+
+.SH SEE ALSO
+.BR sh (1),
+.BR execve (2),
+.BR fork (2),
+.BR waitpid (2)
+
+.SH AUTHORS
+David Dufont
+Arnaud Messenet
+
+dufont.dd@gmail.com
+a.messenet@gmail.com
