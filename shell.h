@@ -36,7 +36,7 @@ int execute_cmd(char **argv, char *prog_name, int cmd_count);
 char *_getenv(const char *name);
 
 /* builtins */
-int handle_builtins(char **argv);
+int handle_builtins(char **argv, int *status);
 
 /* cleanup */
 void free_argv(char **argv);
