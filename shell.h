@@ -36,9 +36,10 @@ int execute_cmd(char **argv, char *prog_name, int cmd_count);
 char *_getenv(const char *name);
 
 /* builtins */
-int handle_builtins(char **argv, int *status);
+int handle_builtins(char **argv, int *status, char *line);
 
 /* cleanup */
 void free_argv(char **argv);
+void cleanup_shell(char *line);
 
 #endif /* SHELL_H */
